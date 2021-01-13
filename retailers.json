@@ -1,0 +1,4 @@
+{
+  "costco": "<input type=\"button\" id=\"add-to-cart-btn\" name=\"add-to-cart\" value=\"Add to Cart\" class=\"primary-button-v2\">",
+  "amazon": "In Stock."
+}

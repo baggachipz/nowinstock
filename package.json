@@ -1,0 +1,28 @@
+{
+  "name": "nowinstock",
+  "version": "1.0.0",
+  "description": "Tracker to send alerts when an out-of-stock item returns in stock at online retailers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baggachipz/nowinstock.git"
+  },
+  "author": "Matt Curtis <matt@curtii.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baggachipz/nowinstock/issues"
+  },
+  "homepage": "https://github.com/baggachipz/nowinstock#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "prompt": "^1.1.0",
+    "twilio": "^3.54.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
