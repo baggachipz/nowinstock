@@ -1,4 +1,7 @@
 {
-  "costco": "<input type=\"button\" id=\"add-to-cart-btn\" name=\"add-to-cart\" value=\"Add to Cart\" class=\"primary-button-v2\">",
-  "amazon": "In Stock."
+  "costco": "#add-to-cart-btn",
+  "amazon": "#add-to-cart-button",
+  "bestbuy": "button.add-to-cart-button",
+  "target": "button[data-test='shipItButton']",
+  "gamestop": "button.add-to-cart"
 }

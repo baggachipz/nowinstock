@@ -1,4 +1,4 @@
-const axios = require('axios')
+const puppeteer = require('puppeteer')
 const Retailers = Object.assign({}, require('./retailers.json'))
 
 class ConfigError extends Error {
@@ -21,11 +21,20 @@ try {
 }
 
 async function main(config) {
+  const browser = await puppeteer.launch()
   config.items.forEach(async (item, idx) => {
     try {
       if (!item.inStock) {
-        const body = await axios.get(item.url, { timeout: 5000 })
-        if (body.data.search(new RegExp(Retailers[item.type])) !== -1) {
+        const page = await browser.newPage()
+        await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36')
+        await page.goto(item.url, {waitUntil: 'networkidle2'})
+        let inStock = false
+        try {
+          await page.waitForSelector(Retailers[item.type], { visible: true, timeout: 5000 })
+          inStock = true
+        } catch (e) {}
+        
+        if (inStock) {
           const twilio = require('twilio')(config.twilio.sid, config.twilio.token)
           twilio.messages.create({
             body: `${item.name} IN STOCK: ${item.url}`,
