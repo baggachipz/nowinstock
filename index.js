@@ -28,10 +28,9 @@ try {
  * @param {} config 
  */
 async function main(config) {
-  const browser = await puppeteer.launch()
-
   // iterate through the 'items' array in the config
   config.items.forEach(async (item, idx) => {
+    const browser = await puppeteer.launch()
     try {
       // if the item has already been marked in-stock, don't proceed
       if (!item.inStock) {
@@ -69,7 +68,10 @@ async function main(config) {
       }
     } catch (e) {
       console.log(new Date().toString() + ' Error checking for ' + item.name)
+    } finally {
+      await browser.close()
     }
+
   })
   
   // recursively call the main loop again after the interval
