@@ -1,15 +1,18 @@
 const puppeteer = require('puppeteer')
 const Retailers = Object.assign({}, require('./retailers.json'))
 
+/**
+ * Error class used below to capture the partial config if one exists and send it to the catch block
+ */
 class ConfigError extends Error {
   constructor(config = {}, ...params) {
     super(...params)
     this.name = 'ConfigError'
     this.config = config
-    this.date = new Date()
   }
 }
 
+// load the config and test it. If no config, go through the config create path. Then run the main portion.
 try {
   const config = require('./config.json')
   if (!config || !config.phone || !config.twilio || !config.twilio.sid || !config.twilio.token || !config.twilio.number || !config.items || !config.items.length) throw new ConfigError(config)
@@ -20,21 +23,36 @@ try {
   })
 }
 
+/**
+ * Main application loop. 
+ * @param {} config 
+ */
 async function main(config) {
   const browser = await puppeteer.launch()
+
+  // iterate through the 'items' array in the config
   config.items.forEach(async (item, idx) => {
     try {
+      // if the item has already been marked in-stock, don't proceed
       if (!item.inStock) {
         const page = await browser.newPage()
+
+        // set the user-agent string so that certain sites don't block access
         await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36')
         await page.goto(item.url, {waitUntil: 'networkidle2'})
+        
+        // assume not in stock until proven otherwise
         let inStock = false
         try {
+          // try to select the item on the page (most likely the buy button) that proves item is in stock. Throws exception if not found
           await page.waitForSelector(Retailers[item.type], { visible: true, timeout: 5000 })
           inStock = true
-        } catch (e) {}
+        } catch (e) {
+          // do nothing if not found, since inStock is assumed false
+        }
         
         if (inStock) {
+          // instantiate twilio with the config params and send the message
           const twilio = require('twilio')(config.twilio.sid, config.twilio.token)
           twilio.messages.create({
             body: `${item.name} IN STOCK: ${item.url}`,
@@ -42,6 +60,8 @@ async function main(config) {
             to: config.phone
           })
           console.log(new Date().toString() + ' IN STOCK: ' + item.name)
+
+          // mark it as in stock so as to not trigger another message through twilio
           config.items[idx].inStock = true
         } else {
           console.log(new Date().toString() + ' Out of stock: ' + item.name)
@@ -51,6 +71,8 @@ async function main(config) {
       console.log(new Date().toString() + ' Error checking for ' + item.name)
     }
   })
+  
+  // recursively call the main loop again after the interval
   setTimeout(() => main(config), config.interval || 120000)
 }
 
