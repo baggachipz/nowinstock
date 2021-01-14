@@ -41,14 +41,14 @@ async function main(config) {
             from: config.twilio.number,
             to: config.phone
           })
-          console.log('IN STOCK: ' + item.name)
+          console.log(new Date().toString() + ' IN STOCK: ' + item.name)
           config.items[idx].inStock = true
         } else {
-          console.log('Out of stock: ' + item.name)
+          console.log(new Date().toString() + ' Out of stock: ' + item.name)
         }
       }
     } catch (e) {
-      console.log('Error checking for ' + item.name)
+      console.log(new Date().toString() + ' Error checking for ' + item.name)
     }
   })
   setTimeout(() => main(config), config.interval || 120000)
