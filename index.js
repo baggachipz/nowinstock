@@ -67,7 +67,7 @@ async function main(config) {
         }
       }
     } catch (e) {
-      console.log(new Date().toString() + ' Error checking for ' + item.name)
+      console.log(new Date().toString() + ' Error checking for ' + item.name + ': ' + JSON.stringify(e))
     } finally {
       await browser.close()
     }
