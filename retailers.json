@@ -3,5 +3,5 @@
   "amazon": "#add-to-cart-button",
   "bestbuy": "button.add-to-cart-button",
   "target": "button[data-test='shipItButton']",
-  "gamestop": "button.add-to-cart"
+  "gamestop": "button.add-to-cart:not([disabled])"
 }
