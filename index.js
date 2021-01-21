@@ -70,7 +70,7 @@ async function main(config) {
       console.log(new Date().toString() + ' Error checking for ' + item.name + ': ' + JSON.stringify(e))
       const twilio = require('twilio')(config.twilio.sid, config.twilio.token)
       twilio.messages.create({
-        body: `Error: ` + JSON.stringify(e),
+        body: `Error on ${item.name}: ` + JSON.stringify(e),
         from: config.twilio.number,
         to: config.phone
       })
